@@ -21,7 +21,7 @@ const AttendeeTable = (props) => {
     useEffect(() => {
         const fetchData = () => {
             axios
-                .get(`http://127.0.0.1:8000/api/events/${id}`)
+                .get(`https://api.boxvlu.click/api/events/${id}`)
                 .then(response => {
                     const eventData = response.data;
                     setEventName(eventData.title);
@@ -48,7 +48,7 @@ const AttendeeTable = (props) => {
 
     const getAttendeesByEventName = (eventName) => {
         axios
-            .get(`http://127.0.0.1:8000/api/attendees/event/${eventName}`)
+            .get(`https://api.boxvlu.click/api/attendees/event/${eventName}`)
             .then(response => {
                 setEventAttendees(response.data);
             })
@@ -108,7 +108,7 @@ const AttendeeTable = (props) => {
     //Điểm danh
     const handleUpdate = () => {
         axios
-            .put(`http://127.0.0.1:8000/api/attendees/code/${result}`)
+            .put(`https://api.boxvlu.click/api/attendees/code/${result}`)
             .then(response => {
                 console.log(response.data)
                 toast.success('Điểm danh thành công')
@@ -141,7 +141,7 @@ const AttendeeTable = (props) => {
     const importAttendees = () => {
         data.forEach(attendee => {
             axios
-                .post('http://127.0.0.1:8000/api/attendees', attendee)
+                .post('https://api.boxvlu.click/api/attendees', attendee)
                 .then(response => {
                     console.log(response.data);
                     if (response.data.status === 'error') {

@@ -1,28 +1,62 @@
+/**
+ * Renders information about the user obtained from MS Graph
+ * @param props 
+ */
 import { Fragment, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Logo from '../../assets/image/logo.png'
-import { useMsal } from '@azure/msal-react';
-import { logout, msalInstance } from '../authencations/office-365/authConfig';
-
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from '../authencations/office-365/authConfig';
+import { callMsGraph } from '../authencations/office-365/graph';
+import { Link } from 'react-router-dom';
 const navigationData = [
     { name: 'Trang chủ', href: '/home', current: false },
     { name: 'Hội nghị - Sự kiện', href: '/listevent', current: false },
     { name: 'Sự kiện của tôi', href: '/myevent', current: false },
 ]
-
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
-
 export default function NavBar() {
-    const [navigation, setNavigation] = useState(navigationData);
-    const { accounts } = useMsal();
-    const [user, setUser] = useState(null);
-    const [mail, setEmail] = useState(null);
-    console.log(user);
-    console.log(mail);  
+    const { instance, accounts } = useMsal();
+    const [graphData, setGraphData] = useState(null);
+    function RequestProfileData() {
+        // Silently acquires an access token which is then attached to a request for MS Graph data
+        instance.acquireTokenSilent({
+            ...loginRequest,
+            account: accounts[0]
+        }).then((response) => {
+            callMsGraph(response.accessToken).then(response => setGraphData(response));
+        });
+    }
+    useEffect(() => {
+        if (graphData) {
+            // Nếu graphData tồn tại, lưu giá trị username của accounts[0] vào sessionStorage
+            localStorage.setItem('account', JSON.stringify(accounts[0].username));
+            const myStronge= localStorage.getItem('account')
+            console.log(myStronge)
+        }
 
+        RequestProfileData();
+    }, []);
+    const handleLogout = (logoutType) => {
+        if (logoutType === "popup") {
+            instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            });
+        } else if (logoutType === "redirect") {
+            instance.logoutRedirect({
+                postLogoutRedirectUri: "/",
+            });
+        }
+
+        // Xóa giá trị 'account' khỏi localStorage
+        localStorage.removeItem('account');
+    }
+
+    const [navigation, setNavigation] = useState(navigationData);
     const handleLinkClick = (index) => {
         const updatedNavigation = navigation.map((item, i) => {
             if (i === index) {
@@ -33,28 +67,6 @@ export default function NavBar() {
         });
         setNavigation(updatedNavigation);
     };
-
-    const getAccountInfo = async () => {
-        const account = await msalInstance.getAccountByLocalId(accounts[0].localAccountId);
-        const displayName = account.name;
-        const email = account.username;
-        const avatarUrl = account.avatar;
-        console.log(account)
-        // update the state with the user info...
-        setEmail({ email })
-        setUser({ displayName, email, avatarUrl });
-    };
-
-    useEffect(() => {
-        if (accounts.length > 0) {
-            getAccountInfo();
-        }
-    }, [accounts]);
-
-    const handleLogout = () => {
-        logout();
-    };
-
     return (
         <Disclosure as="nav" className="top-0 bg-gray-100">
             {({ open }) => (
@@ -106,9 +118,9 @@ export default function NavBar() {
                             </div>
                             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                                 {/* Profile dropdown */}
-                                {user ? (
+                                {graphData ? (
                                     <div className='flex items-center'>
-                                        <div className='mx-2 text-gray-900  hover:text-red-700 rounded-md px-3 py-2 text-sm font-medium hidden sm:ml-6 sm:block'>Xin chào, {user.displayName} </div>
+                                        <div className='mx-2 text-gray-900  hover:text-red-700 rounded-md px-3 py-2 text-sm font-medium hidden sm:ml-6 sm:block'>Xin chào, {accounts[0].name} </div>
                                         <Menu as="div" className="relative ml-3">
                                             <div>
                                                 <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -142,13 +154,13 @@ export default function NavBar() {
                                                     </Menu.Item>
                                                     <Menu.Item>
                                                         {({ active }) => (
-                                                            <a
-                                                                href="#"
-                                                                onClick={handleLogout}
+                                                            <button
+                                                                href="/"
+                                                                onClick={() => handleLogout("redirect")}
                                                                 className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                                                             >
                                                                 Đăng xuất
-                                                            </a>
+                                                            </button>
                                                         )}
                                                     </Menu.Item>
                                                 </Menu.Items>
@@ -156,15 +168,14 @@ export default function NavBar() {
                                         </Menu>
                                     </div>
                                 ) : (
-                                        <a className='text-gray-900  hover:text-red-700 rounded-md px-3 py-2 text-sm font-medium' href='/login'>Đăng nhập / Đăng ký</a>
-                                    )}
+                                    <a className='text-gray-900  hover:text-red-700 rounded-md px-3 py-2 text-sm font-medium' href='/'>Đăng nhập / Đăng ký</a>
+                                )}
                             </div>
                         </div>
                     </div>
-
                     <Disclosure.Panel className="sm:hidden">
                         <div className="space-y-1 px-2 pb-3 pt-2">
-                            {navigation.map((item,index) => (
+                            {navigation.map((item, index) => (
                                 <Disclosure.Button
                                     key={item.name}
                                     as="a"

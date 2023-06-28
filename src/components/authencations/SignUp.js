@@ -1,4 +1,4 @@
-import { MsalProvider, useMsal } from '@azure/msal-react';
+import { useMsal } from '@azure/msal-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -28,7 +28,7 @@ const SignUp = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/users/login', { email, password });
+      const response = await axios.post('https://api.boxvlu.click/api/users/login', { email, password });
 
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('email', response.data.email);
@@ -73,7 +73,7 @@ const SignUp = () => {
           {/* Row */}
           <div className="w-full xl:w-3/4 lg:w-11/12 flex">
             {/* Col */}
-            <div className="bg-center bg-cover w-full h-auto bg-gray-400 hidden lg:block lg:w-1/2 bg-cover rounded-l-lg" style={{ backgroundImage: `url(${backgroundImage})` }} />
+            <div className="bg-center w-full h-auto bg-gray-400 hidden lg:block lg:w-1/2 bg-cover rounded-l-lg" style={{ backgroundImage: `url(${backgroundImage})` }} />
             {/* Col */}
             <div className="w-full lg:w-1/2 bg-white p-5 rounded-lg lg:rounded-l-none border-inherit">
               <img
@@ -112,14 +112,14 @@ const SignUp = () => {
                 </div>
                 <hr className="mb-6 border-t" />
                 <div className="text-center">
-                  <a className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800" href="#">
+                  <button className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800">
                     Đăng Ký Tài Khoản Mới
-                  </a>
+                  </button>
                 </div>
                 <div className="text-center">
-                  <a className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800" href="#">
+                  {/* <a className="inline-block text-sm text-blue-500 align-baseline hover:text-blue-800" href="#">
                     Quên Mật Khẩu?
-                  </a>
+                  </a> */}
                 </div>
               </form>
               <ToastContainer />

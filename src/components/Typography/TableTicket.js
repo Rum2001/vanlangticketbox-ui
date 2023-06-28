@@ -30,7 +30,7 @@ const TableTicket = () => {
     }, [accounts]);
     const [data, setData] = useState([])
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/ticket?email=thi.197ct33783@vanlanguni.vn`)
+        axios.get(`https://api.boxvlu.click/api/ticket?email=thi.197ct33783@vanlanguni.vn`)
             .then(response => {
                 setData(response.data);
             })
@@ -46,7 +46,7 @@ const TableTicket = () => {
     useEffect(() => {
         const fetchData = () => {
           axios
-            .get(`http://127.0.0.1:8000/api/attendees/${id}`)
+            .get(`https://api.boxvlu.click/api/attendees/${id}`)
             .then(response => {
               setEventByID(response.data.event_name);
               setStartByID(response.data.start_time);

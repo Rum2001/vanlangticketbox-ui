@@ -8,7 +8,7 @@ import 'slick-carousel/slick/slick-theme.css';
 const Hero = () => {
     const [data,setData] = useState([])
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/events/approved`)
+        axios.get(`https://api.boxvlu.click/api/events/approved`)
           .then(response => {
             setData(response.data);
           })
@@ -42,7 +42,7 @@ const Hero = () => {
                             {data.map((event, index) => (
                                 <img
                                     key={index}
-                                    src={`http://127.0.0.1:8000/api/images/${event.path}`}
+                                    src={`https://api.boxvlu.click/api/images/${event.path}`}
                                     alt={event.title}
                                     className="h-full w-full object-cover"
                                 />

@@ -1,4 +1,5 @@
-import { MsalProvider, useMsal } from '@azure/msal-react';
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "../authencations/office-365/authConfig";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -7,28 +8,27 @@ import 'react-toastify/dist/ReactToastify.css';
 import Logo from '../../assets/image/logo.png'
 import backgroundImage from '../../assets/image/06f40f5d1231c77145726465eece3b48.jpeg'
 const Login = () => {
-  const { instance } = useMsal();
   const navigate = useNavigate();
+  const { instance } = useMsal();
 
-  useEffect(() => {
-    if (instance.getActiveAccount()) {
-      navigate('/home');
-    }
-  }, [instance, navigate]);
-
-  const handleLogin = async () => {
-    await instance.loginPopup();
-    navigate('/home');
-  };
+  const handleLogin = (loginType) => {
+      if (loginType === "popup") {
+          instance.loginPopup(loginRequest).catch(e => {
+              console.log(e);
+          });
+      } else if (loginType === "redirect") {
+          instance.loginRedirect(loginRequest).catch(e => {
+              console.log(e);
+          });
+      }
+  }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/users/login', { email, password });
-
+      const response = await axios.post('https://api.boxvlu.click/api/users/login', { email, password });
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('email', response.data.email);
       localStorage.setItem('name', response.data.name);
@@ -110,7 +110,7 @@ const Login = () => {
                       or
                     </span>
                   </div>
-                  <button o nClick={handleLogin} className="w-full my-3 px-4 py-2 font-bold text-white bg-orange-600 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="button">
+                  <button onClick={() => handleLogin("popup")} className="w-full my-3 px-4 py-2 font-bold text-white bg-orange-600 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="button">
                     Đăng Nhập Bằng Tài Khoản Office 365
                   </button>
                 </div>

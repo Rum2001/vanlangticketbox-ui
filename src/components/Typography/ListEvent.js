@@ -17,7 +17,7 @@ function ListEvent() {
 
   async function fetchEvents() {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/events');
+      const response = await axios.get('https://api.boxvlu.click/api/events');
       const eventsData = response.data;
       setEvents(eventsData);
       setOriginalEvents(eventsData);
@@ -28,7 +28,7 @@ function ListEvent() {
 
   async function fetchCategories() {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/categories');
+      const response = await axios.get('https://api.boxvlu.click/api/categories');
       setCategories(response.data);
     } catch (error) {
       console.log(error);
@@ -110,7 +110,7 @@ function ListEvent() {
               <Link to={`/event/${item.id}`} className="group relative" key={item.id}>
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
                   <img
-                    src={`http://127.0.0.1:8000/api/images/${item.path}`}
+                    src={`https://api.boxvlu.click/api/images/${item.path}`}
                     alt="Front of men's Basic Tee in black."
                     className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                   />

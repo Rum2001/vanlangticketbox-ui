@@ -19,7 +19,7 @@ const EventsPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/events/${id}`);
+                const response = await axios.get(`https://api.boxvlu.click/api/events/${id}`);
                 setPath(response.data.path);
                 setEmail(response.data.email);
                 setTitle(response.data.title);
@@ -46,7 +46,7 @@ const EventsPage = () => {
     }
     const handleApproveConfirmation = async () => {
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/attendees`, {
+            const response = await axios.post(`https://api.boxvlu.click/api/attendees`, {
                 email: 'thi.197ct33783@vanlanguni.vn',
                 event_name: `${title}`,
                 location: `${locations}`,
@@ -71,7 +71,7 @@ const EventsPage = () => {
 
         <section className=" bg-gray-50">
             <div className="container mx-auto px-4 relative">
-                <div className="block mb-20" data-aos="fade-up" data-aos-delay={300}><img className="object-cover h-min w-full" src={`http://127.0.0.1:8000/api/images/${path}`} alt="freetailwindui.co" /></div>
+                <div className="block mb-20" data-aos="fade-up" data-aos-delay={300}><img className="object-cover h-min w-full" src={`https://api.boxvlu.click/api/images/${path}`} alt="freetailwindui.co" /></div>
                 <div className="md:flex mb-10 justify-between">
                     <div className="md:w-5/12 mb-5 md:mb-0">
                         <h2 className="font-bold text-xl lg:text-3xl text-gray-700 leading-tight" data-aos="fade-up" data-aos-delay={0}>{title}</h2>

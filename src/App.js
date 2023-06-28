@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/authencations/SignUp';
 import { MsalProvider } from '@azure/msal-react';
@@ -12,14 +12,12 @@ import Attendee from './components/page/Attendee';
 import ListEvent from './components/Typography/ListEvent';
 import Tickets from './components/page/Ticket';
 const App = () => {
-  
-
   return (
     <MsalProvider instance={msalInstance}>
-      <NavBar />
+      <NavBar/>
       <Router>
         <Routes>
-          <Route path="/login" Component={Login} />
+          <Route path="/" Component={Login} />
           <Route path="/home" Component={Home} />
           <Route path="/event/:id" Component={EventsPage} />
           <Route path="/myevent" Component={MyEvents} />

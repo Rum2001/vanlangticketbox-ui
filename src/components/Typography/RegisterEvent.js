@@ -43,7 +43,7 @@ export default function ReEvent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/events/${id}`);
+        const response = await axios.get(`https://api.boxvlu.click/api/events/${id}`);
         setPath(response.data.path);
         setTitle(response.data.title);
         setDescription(response.data.description);
@@ -71,7 +71,7 @@ export default function ReEvent() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/attendees', {
+      const response = await axios.post('https://api.boxvlu.click/api/attendees', {
         email,
         event_name,
         verify_code,

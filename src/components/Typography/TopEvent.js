@@ -9,7 +9,7 @@ const TopEvent = () => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/events/approved`)
+        axios.get(`https://api.boxvlu.click/api/events/approved`)
             .then(response => {
                 setData(response.data);
             })
@@ -49,7 +49,7 @@ const TopEvent = () => {
             >
                 {data.map((event, index) => (
                     <div key={index} className=" px-2 zoom shadow-lg rounded-lg relative overflow-hidden bg-no-repeat bg-cover h-[15rem]" style={{ backgroundPosition: '50%' }} data-mdb-ripple="true" data-mdb-ripple-color="dark">
-                        <img src={`http://127.0.0.1:8000/api/images/${event.path}`} className="w-full max-h-full object-cover transition duration-300 ease-linear align-middle" alt={event.name} />
+                        <img src={`https://api.boxvlu.click/api/images/${event.path}`} className="w-full max-h-full object-cover transition duration-300 ease-linear align-middle" alt={event.name} />
                         <Link to={`/event/${event.id}`}>
                             <div className="mx-2 absolute top-0 right-0 bottom-0 left-0 w-full h-full overflow-hidden bg-fixed" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
                                 <div className="flex justify-start items-end h-full">

@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useMsal } from '@azure/msal-react';
-import { msalInstance } from '../authencations/office-365/authConfig';
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from '../authencations/office-365/authConfig';
+import { callMsGraph } from '../authencations/office-365/graph';
 import axios from 'axios'
 import { HiTrash, HiGlobeAlt } from "react-icons/hi";
 import { HiEyeSlash, HiEye, HiUserGroup } from "react-icons/hi2";
@@ -11,25 +12,17 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 const Table = () => {
     const { id } = useParams();
-    const { accounts } = useMsal();
-    const [mail, setEmail] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    console.log(mail);
-    const getAccountInfo = async () => {
-        const account = await msalInstance.getAccountByLocalId(accounts[0].localAccountId);
-        const email = account.username;
-        console.log(account)
-        // update the state with the user info...
-        setEmail({ email })
-    };
+    const [data, setData] = useState([]);
+    let localMail;
+    if (localStorage.getItem('account')) {
+        localMail = localStorage.getItem('account');
+    } else {
+        localMail = "none";
+    }
+    const cleanedAccount = localMail.replace(/^"(.*)"$/, '$1');
     useEffect(() => {
-        if (accounts.length > 0) {
-            getAccountInfo();
-        }
-    }, [accounts]);
-    const [data, setData] = useState([])
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/email?email=thi.197ct33783@vanlanguni.vn`)
+        axios.get(`https://api.boxvlu.click/api/email?email=${cleanedAccount}`)
             .then(response => {
                 setData(response.data);
             })
@@ -38,11 +31,11 @@ const Table = () => {
             });
     }, []);
     const filteredData = data.filter((item) =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.categories.toLowerCase().includes(searchTerm.toLowerCase())||
-    item.status.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-    
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.categories.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.status.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     let [isOpenDel, setIsOpenDel] = useState(false)
     function closeDelModal() {
         setIsOpenDel(false)

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from '../authencations/office-365/authConfig';
+import { callMsGraph } from '../authencations/office-365/graph';
 const CreateEvent = () => {
   const { register, handleSubmit, reset, setValue } = useForm();
   const [categories, setCategories] = useState([]);
@@ -12,10 +15,10 @@ const CreateEvent = () => {
     const fetchOptions = async () => {
       try {
         const [categoriesResponse, facultiesResponse, locationsResponse, scalesResponse] = await Promise.all([
-          axios.get('http://127.0.0.1:8000/api/categories'),
-          axios.get('http://127.0.0.1:8000/api/faculties'),
-          axios.get('http://127.0.0.1:8000/api/locations'),
-          axios.get('http://127.0.0.1:8000/api/scales'),
+          axios.get('https://api.boxvlu.click/api/categories'),
+          axios.get('https://api.boxvlu.click/api/faculties'),
+          axios.get('https://api.boxvlu.click/api/locations'),
+          axios.get('https://api.boxvlu.click/api/scales'),
         ]);
 
         setCategories(categoriesResponse.data);
@@ -61,7 +64,7 @@ const CreateEvent = () => {
         formData.append(key, value);
       });
 
-      await axios.post('http://127.0.0.1:8000/api/events', formData, {
+      await axios.post('https://api.boxvlu.click/api/events', formData, {
         headers: {
           'Content-Type': 'multipart/form-data' // Đặt header 'Content-Type' là 'multipart/form-data' để tải tệp lên
         }
