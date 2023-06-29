@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useMsal } from '@azure/msal-react';
-import { msalInstance } from '../authencations/office-365/authConfig';
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from '../authencations/office-365/authConfig';
+import { callMsGraph } from '../authencations/office-365/graph';
 import axios from 'axios'
-import { HiTrash, HiGlobeAlt } from "react-icons/hi";
-import { HiEyeSlash, HiEye, HiUserGroup } from "react-icons/hi2";
+import { HiEye } from "react-icons/hi2";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Dialog, Transition } from '@headlessui/react'
@@ -12,32 +12,41 @@ import 'react-toastify/dist/ReactToastify.css';
 import QRCode from 'qrcode.react';
 const TableTicket = () => {
     const { id } = useParams();
-    const { accounts } = useMsal();
-    const [mail, setEmail] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    console.log(mail);
-    const getAccountInfo = async () => {
-        const account = await msalInstance.getAccountByLocalId(accounts[0].localAccountId);
-        const email = account.username;
-        console.log(account)
-        // update the state with the user info...
-        setEmail({ email })
-    };
+    const [data, setData] = useState([]);
+    const { instance, accounts } = useMsal();
+    const [graphData, setGraphData] = useState(null);
+    function RequestProfileData() {
+        // Silently acquires an access token which is then attached to a request for MS Graph data
+        instance.acquireTokenSilent({
+            ...loginRequest,
+            account: accounts[0]
+        }).then((response) => {
+            callMsGraph(response.accessToken).then(response => setGraphData(response));
+        });
+    }
     useEffect(() => {
-        if (accounts.length > 0) {
-            getAccountInfo();
-        }
-    }, [accounts]);
-    const [data, setData] = useState([])
+        RequestProfileData();
+    }, []);
     useEffect(() => {
-        axios.get(`https://api.boxvlu.click/api/ticket?email=thi.197ct33783@vanlanguni.vn`)
+        if (graphData) {
+          axios.get(`https://api.boxvlu.click/api/email?email=${accounts[0].username}`)
             .then(response => {
-                setData(response.data);
+              setData(response.data);
             })
             .catch(error => {
-                console.error(error);
+              console.error(error);
             });
-    }, []);
+        } else {
+          axios.get('https://api.boxvlu.click/api/email?email=none')
+            .then(response => {
+              setData(response.data);
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        }
+      }, [graphData, accounts]);
     const [eventbyid, setEventByID] = useState("");
     const [start_timebyid, setStartByID] = useState("");
     const [verifycodebyid, setVerifyCodeByID] = useState("");

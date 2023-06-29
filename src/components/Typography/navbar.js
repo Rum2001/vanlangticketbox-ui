@@ -9,7 +9,7 @@ import Logo from '../../assets/image/logo.png'
 import { useMsal } from "@azure/msal-react";
 import { loginRequest } from '../authencations/office-365/authConfig';
 import { callMsGraph } from '../authencations/office-365/graph';
-import { Link } from 'react-router-dom';
+import { HiUserCircle } from 'react-icons/hi';
 const navigationData = [
     { name: 'Trang chủ', href: '/home', current: false },
     { name: 'Hội nghị - Sự kiện', href: '/listevent', current: false },
@@ -31,13 +31,6 @@ export default function NavBar() {
         });
     }
     useEffect(() => {
-        if (graphData) {
-            // Nếu graphData tồn tại, lưu giá trị username của accounts[0] vào sessionStorage
-            localStorage.setItem('account', JSON.stringify(accounts[0].username));
-            const myStronge= localStorage.getItem('account')
-            console.log(myStronge)
-        }
-
         RequestProfileData();
     }, []);
     const handleLogout = (logoutType) => {
@@ -67,6 +60,26 @@ export default function NavBar() {
         });
         setNavigation(updatedNavigation);
     };
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 768px)');
+
+        // Cập nhật giá trị isMobile ban đầu
+        setIsMobile(mediaQuery.matches);
+
+        // Theo dõi sự thay đổi kích thước màn hình và cập nhật giá trị isMobile khi cần thiết
+        const handleResize = () => {
+            setIsMobile(mediaQuery.matches);
+        };
+
+        mediaQuery.addEventListener('change', handleResize);
+
+        // Hủy theo dõi khi component bị hủy
+        return () => {
+            mediaQuery.removeEventListener('change', handleResize);
+        };
+    }, []);
     return (
         <Disclosure as="nav" className="top-0 bg-gray-100">
             {({ open }) => (
@@ -168,7 +181,20 @@ export default function NavBar() {
                                         </Menu>
                                     </div>
                                 ) : (
-                                    <a className='text-gray-900  hover:text-red-700 rounded-md px-3 py-2 text-sm font-medium' href='/'>Đăng nhập / Đăng ký</a>
+                                    <div>
+                                        {isMobile ? (
+                                            <HiUserCircle 
+                                            href='/'
+                                            />
+                                        ) : (
+                                            <a
+                                                className="text-gray-900 hover:text-red-700 rounded-md px-3 py-2 text-sm font-medium"
+                                                href="/"
+                                            >
+                                                Đăng nhập / Đăng ký
+                                            </a>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>

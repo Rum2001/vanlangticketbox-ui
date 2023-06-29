@@ -1,7 +1,4 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useMsal } from "@azure/msal-react";
-import { loginRequest } from '../authencations/office-365/authConfig';
-import { callMsGraph } from '../authencations/office-365/graph';
 import axios from 'axios'
 import { HiTrash, HiGlobeAlt } from "react-icons/hi";
 import { HiEyeSlash, HiEye, HiUserGroup } from "react-icons/hi2";
@@ -10,26 +7,47 @@ import { Link } from "react-router-dom";
 import { Dialog, Transition } from '@headlessui/react'
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from '../authencations/office-365/authConfig';
+import { callMsGraph } from '../authencations/office-365/graph';
 const Table = () => {
     const { id } = useParams();
     const [searchTerm, setSearchTerm] = useState('');
     const [data, setData] = useState([]);
-    let localMail;
-    if (localStorage.getItem('account')) {
-        localMail = localStorage.getItem('account');
-    } else {
-        localMail = "none";
+    const { instance, accounts } = useMsal();
+    const [graphData, setGraphData] = useState(null);
+    function RequestProfileData() {
+        // Silently acquires an access token which is then attached to a request for MS Graph data
+        instance.acquireTokenSilent({
+            ...loginRequest,
+            account: accounts[0]
+        }).then((response) => {
+            callMsGraph(response.accessToken).then(response => setGraphData(response));
+        });
     }
-    const cleanedAccount = localMail.replace(/^"(.*)"$/, '$1');
     useEffect(() => {
-        axios.get(`https://api.boxvlu.click/api/email?email=${cleanedAccount}`)
+        RequestProfileData();
+    }, []);
+    useEffect(() => {
+        if (graphData) {
+          axios.get(`https://api.boxvlu.click/api/email?email=${accounts[0].username}`)
             .then(response => {
-                setData(response.data);
+              setData(response.data);
             })
             .catch(error => {
-                console.error(error);
+              console.error(error);
             });
-    }, []);
+        } else {
+          axios.get('https://api.boxvlu.click/api/email?email=none')
+            .then(response => {
+              setData(response.data);
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        }
+      }, [graphData, accounts]);
+      
     const filteredData = data.filter((item) =>
         item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.categories.toLowerCase().includes(searchTerm.toLowerCase()) ||
