@@ -6,6 +6,9 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from '../authencations/office-365/authConfig';
+import { callMsGraph } from '../authencations/office-365/graph';
 const EventsPage = () => {
     const { id } = useParams();
     const [path, setPath] = useState('')
@@ -45,27 +48,47 @@ const EventsPage = () => {
         setIsOpen(true)
     }
     const handleApproveConfirmation = async () => {
-        try {
-            const response = await axios.post(`https://api.boxvlu.click/api/attendees`, {
-                email: 'thi.197ct33783@vanlanguni.vn',
+        if (graphData) {
+          try {
+            const response = await axios.post(
+              'https://api.boxvlu.click/api/attendees',
+              {
+                email: accounts[0].username,
                 event_name: `${title}`,
                 location: `${locations}`,
                 start_time: `${start_time}`,
-
                 end_time: `${end_time}`,
-            });
+              }
+            );
             setIsOpen(false);
             if (response.data.status === 'error') {
-                toast.error(response.data.message);
+              toast.error(response.data.message);
+            } else {
+              toast.success('Đăng ký thành công');
             }
-            else {
-                toast.success("Đăng ký thành công")
-            }
-        } catch (error) {
+          } catch (error) {
             console.error(error);
-            toast.error("Đăng ký thất bại");
+            toast.error('Đăng ký thất bại');
+          }
+        } else {
+          toast.error('Bạn cần đăng nhập để thực hiện đăng ký');
         }
-    };
+      };
+      
+    const { instance, accounts } = useMsal();
+    const [graphData, setGraphData] = useState(null);
+    function RequestProfileData() {
+        // Silently acquires an access token which is then attached to a request for MS Graph data
+        instance.acquireTokenSilent({
+            ...loginRequest,
+            account: accounts[0]
+        }).then((response) => {
+            callMsGraph(response.accessToken).then(response => setGraphData(response));
+        });
+    }
+    useEffect(() => {
+        RequestProfileData();
+    }, []);
 
     return (
 

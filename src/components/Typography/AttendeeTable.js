@@ -96,7 +96,7 @@ const AttendeeTable = (props) => {
             setResult(result.getText());
         },
     });
-    let [isOpen, setIsOpen] = useState(false)
+    let [isOpen, setIsOpen] = useState(true)
 
     function closeModal() {
         setIsOpen(false)
@@ -294,7 +294,7 @@ const AttendeeTable = (props) => {
                                                         </p>
                                                         <div className="scanqr flex flex-col items-center justify-center">
                                                             <div className="relative aspect-w-1 aspect-h-1">
-                                                                <video ref={ref} className="h-[20rem] w-[20rem]" />
+                                                                    <video ref={ref} className="h-[20rem] w-[20rem]" />
                                                             </div>
                                                             <p className="mt-4">
                                                                 <span className="font-semibold">Last result: </span>

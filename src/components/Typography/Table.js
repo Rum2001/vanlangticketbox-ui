@@ -80,7 +80,7 @@ const Table = () => {
     }
     const handleApproveConfirmation = async () => {
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/events/${id}/status`, {
+            const response = await axios.put(`https://api.boxvlu.click/api/events/${id}/status`, {
                 status: 'Công Khai',
             });
             setIsOpenGlobal(false);
@@ -93,7 +93,7 @@ const Table = () => {
     };
     const handleUnPublicConfirmation = async () => {
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/events/${id}/status`, {
+            const response = await axios.put(`https://api.boxvlu.click/api/events/${id}/status`, {
                 status: 'Ẩn',
             });
             setIsOpenUnGlobal(false);
@@ -105,7 +105,7 @@ const Table = () => {
         }
     };
     const deleteEvent = () => {
-        axios.delete(`http://127.0.0.1:8000/api/events/${id}`)
+        axios.delete(`https://api.boxvlu.click/api/events/${id}`)
             .then(response => {
                 console.log(response.data);
                 setIsOpenDel(false)

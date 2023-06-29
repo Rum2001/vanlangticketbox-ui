@@ -5,7 +5,7 @@ import { useMsal } from "@azure/msal-react";
 import { loginRequest } from '../authencations/office-365/authConfig';
 import { callMsGraph } from '../authencations/office-365/graph';
 const CreateEvent = () => {
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const { register, handleSubmit, reset, setValue, } = useForm();
   const [categories, setCategories] = useState([]);
   const [faculties, setFaculties] = useState([]);
   const [locations, setLocations] = useState([]);

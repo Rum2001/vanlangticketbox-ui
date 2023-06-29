@@ -1,18 +1,23 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { useMsal } from "@azure/msal-react";
-import { loginRequest } from '../authencations/office-365/authConfig';
-import { callMsGraph } from '../authencations/office-365/graph';
 import axios from 'axios'
-import { HiEye } from "react-icons/hi2";
+import {HiEye} from "react-icons/hi2";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Dialog, Transition } from '@headlessui/react'
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import QRCode from 'qrcode.react';
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from '../authencations/office-365/authConfig';
+import { callMsGraph } from '../authencations/office-365/graph';
 const TableTicket = () => {
     const { id } = useParams();
     const [searchTerm, setSearchTerm] = useState('');
+    const [eventbyid, setEventByID] = useState("");
+    const [start_timebyid, setStartByID] = useState("");
+    const [verifycodebyid, setVerifyCodeByID] = useState("");
+    const [end_timebyid, setEndByID] = useState("");
+    const [locationbyid, setLocationByID] = useState("")
     const [data, setData] = useState([]);
     const { instance, accounts } = useMsal();
     const [graphData, setGraphData] = useState(null);
@@ -30,7 +35,7 @@ const TableTicket = () => {
     }, []);
     useEffect(() => {
         if (graphData) {
-          axios.get(`https://api.boxvlu.click/api/email?email=${accounts[0].username}`)
+          axios.get(`https://api.boxvlu.click/api/ticket?email=${accounts[0].username}`)
             .then(response => {
               setData(response.data);
             })
@@ -47,11 +52,6 @@ const TableTicket = () => {
             });
         }
       }, [graphData, accounts]);
-    const [eventbyid, setEventByID] = useState("");
-    const [start_timebyid, setStartByID] = useState("");
-    const [verifycodebyid, setVerifyCodeByID] = useState("");
-    const [end_timebyid, setEndByID] = useState("");
-    const [locationbyid, setLocationByID] = useState("")
     useEffect(() => {
         const fetchData = () => {
           axios
