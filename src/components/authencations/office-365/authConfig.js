@@ -14,7 +14,7 @@ export const msalConfig = {
     auth: {
         clientId: "51152a89-c8e3-461e-8376-f19794ba6a18",
         authority: "https://login.microsoftonline.com/organizations",
-        redirectUri: "http://localhost:3000/"
+        redirectUri: "https://boxvlu.click/home"
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored
